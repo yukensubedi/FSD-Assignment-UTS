@@ -56,25 +56,6 @@ python -m cliuniapp.gui.gui_uni_app
 
 ---
 
-## 📁 Folder Structure
-```
-FSD-Assignment-UTS/
-├── README.md
-├── students.data
-└── cliuniapp/
-    ├── main.py
-    ├── controllers/
-    ├── models/
-    └── gui/
-```
 
 ---
 
-## 🧾 Notes
-- All student and subject data is stored in `students.data`
-- Use **Admin → Clear Database** or delete the file to reset
-- Works on Windows, macOS, and Linux
-
----
-
-**© 2025 University of Technology Sydney – FSD Assignment 1**
