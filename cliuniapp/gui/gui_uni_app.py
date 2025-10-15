@@ -1,6 +1,5 @@
 
 # Basic Tkinter GUI per the challenge task (Student login + enrolment + subject list + exceptions).
-# Note: This is a simple reference GUI; extend styling and windows as needed for your assessment.
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from ..models.database import Database
