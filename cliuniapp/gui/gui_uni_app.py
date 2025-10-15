@@ -1,9 +1,10 @@
-
-# Basic Tkinter GUI per the challenge task (Student login + enrolment + subject list + exceptions).
+# GUIUniApp - simplified enrolment flow (auto random subject assignment)
 import tkinter as tk
-from tkinter import messagebox, simpledialog
+from tkinter import messagebox
+import random
 from ..models.database import Database
 from ..models.student import Student
+
 
 class GUIUniApp(tk.Tk):
     def __init__(self, db_path: str = "students.data"):
@@ -30,7 +31,6 @@ class GUIUniApp(tk.Tk):
         tk.Entry(frm, textvariable=self.pw_var, show="*", width=32).grid(row=1, column=1, padx=6)
 
         tk.Button(self, text="Login", command=self._do_login).pack(pady=10)
-
     def _do_login(self):
         email = self.email_var.get().strip()
         pw = self.pw_var.get().strip()
@@ -59,7 +59,6 @@ class GUIUniApp(tk.Tk):
         btns.pack(pady=6)
         tk.Button(btns, text="Enrol Subject", command=self._enrol_subject).grid(row=0, column=0, padx=5)
         tk.Button(btns, text="Show Subjects", command=self._show_subjects).grid(row=0, column=1, padx=5)
-        tk.Button(btns, text="Change Password", command=self._change_pw).grid(row=0, column=2, padx=5)
 
         self.subj_list = tk.Listbox(self, width=60, height=8)
         self.subj_list.pack(pady=8)
@@ -69,14 +68,31 @@ class GUIUniApp(tk.Tk):
         if not self.student.can_enrol_more():
             messagebox.showwarning("Limit", "You cannot enrol in more than 4 subjects.")
             return
-        name = simpledialog.askstring("Enrol", "Enter subject name:")
-        if not name:
-            return
+
+        # Random subject auto-enrolment (same logic as CLI)
+        available_subjects = [
+            "Data Analytics", "AI Techniques", "Operating Systems",
+            "Database Systems", "Networks", "Machine Learning",
+            "Software Engineering", "Cyber Security"
+        ]
+
+        sub_name = random.choice(available_subjects)
+        sub_id = random.randint(100, 999)
+        mark = random.randint(50, 95)
+        grade = "HD" if mark >= 85 else "D" if mark >= 75 else "C" if mark >= 65 else "P"
+
         try:
-            sub = self.student.enrol_subject(name.strip())
+            sub = self.student.enrol_subject(sub_name)
+            sub.id = sub_id
+            sub.mark = mark
+            sub.grade = grade
             self.db.update_student(self.student)
             self._refresh_subjects()
-            messagebox.showinfo("Enrolled", f"Enrolled in {sub.name} | Mark {sub.mark} | Grade {sub.grade}")
+            messagebox.showinfo("Enrolled",
+                                f"Enrolled in {sub.name}\n"
+                                f"Subject ID: {sub.id}\n"
+                                f"Mark: {mark}\nGrade: {grade}\n"
+                                f"Total Enrolled: {len(self.student.subjects)}/4")
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
@@ -86,17 +102,6 @@ class GUIUniApp(tk.Tk):
         overall = self.student.overall_grade()
         status = "PASS" if self.student.passed() else "FAIL"
         messagebox.showinfo("Subjects Summary", f"Average: {avg:.2f}\nOverall: {overall}\nStatus: {status}")
-
-    def _change_pw(self):
-        new_pw = simpledialog.askstring("Change Password", "New password:", show='*')
-        if not new_pw:
-            return
-        try:
-            self.student.change_password(new_pw.strip())
-            self.db.update_student(self.student)
-            messagebox.showinfo("Success", "Password updated.")
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
 
     def _refresh_subjects(self):
         self.subj_list.delete(0, tk.END)
@@ -109,6 +114,7 @@ class GUIUniApp(tk.Tk):
     def _clear(self):
         for w in self.winfo_children():
             w.destroy()
+
 
 if __name__ == "__main__":
     app = GUIUniApp()

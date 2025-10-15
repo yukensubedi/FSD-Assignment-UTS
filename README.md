@@ -59,3 +59,7 @@ python -m cliuniapp.gui.gui_uni_app
 
 ---
 
+<!-- todo -->
+<!-- change colors and indentation -->
+<!-- chnage passwords flow and remove from GUI -->
+<!-- ENroll students in GUI to be made simple  -->
