@@ -6,17 +6,13 @@ def _rand_subject_id() -> str:
     return f"{random.randint(1, 999):03d}"
 
 def _grade_from_mark(mark: int) -> str:
-    # Grade bands (adjust if your rubric differs)
-    # HD: 85-100, D: 75-84, C: 65-74, P: 50-64, F: <50
-    if mark >= 85:
-        return "HD"
     if mark >= 75:
         return "D"
-    if mark >= 65:
+    elif mark >= 65:
         return "C"
-    if mark >= 50:
+    elif mark >= 50:
         return "P"
-    return "F"
+    return "Z"
 
 @dataclass
 class Subject:

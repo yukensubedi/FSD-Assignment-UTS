@@ -1,4 +1,3 @@
-# GUIUniApp - simplified enrolment flow (auto random subject assignment)
 import tkinter as tk
 from tkinter import messagebox
 import random
@@ -58,7 +57,7 @@ class GUIUniApp(tk.Tk):
         btns = tk.Frame(self)
         btns.pack(pady=6)
         tk.Button(btns, text="Enrol Subject", command=self._enrol_subject).grid(row=0, column=0, padx=5)
-        tk.Button(btns, text="Show Subjects", command=self._show_subjects).grid(row=0, column=1, padx=5)
+        tk.Button(btns, text="Show Average", command=self._show_subjects).grid(row=0, column=1, padx=5)
 
         self.subj_list = tk.Listbox(self, width=60, height=8)
         self.subj_list.pack(pady=8)
@@ -77,21 +76,21 @@ class GUIUniApp(tk.Tk):
         ]
 
         sub_name = random.choice(available_subjects)
-        sub_id = random.randint(100, 999)
-        mark = random.randint(50, 95)
-        grade = "HD" if mark >= 85 else "D" if mark >= 75 else "C" if mark >= 65 else "P"
+        # sub_id = random.randint(100, 999)
+        # mark = random.randint(50, 95)
+        # grade = "HD" if mark >= 85 else "D" if mark >= 75 else "C" if mark >= 65 else "P"
 
         try:
             sub = self.student.enrol_subject(sub_name)
-            sub.id = sub_id
-            sub.mark = mark
-            sub.grade = grade
+            # sub.id = sub_id
+            # sub.mark = mark
+            # sub.grade = grade
             self.db.update_student(self.student)
             self._refresh_subjects()
             messagebox.showinfo("Enrolled",
                                 f"Enrolled in {sub.name}\n"
                                 f"Subject ID: {sub.id}\n"
-                                f"Mark: {mark}\nGrade: {grade}\n"
+                                f"Mark: {sub.mark}\nGrade: {sub.grade}\n"
                                 f"Total Enrolled: {len(self.student.subjects)}/4")
         except Exception as e:
             messagebox.showerror("Error", str(e))
@@ -101,7 +100,7 @@ class GUIUniApp(tk.Tk):
         avg = self.student.average_mark()
         overall = self.student.overall_grade()
         status = "PASS" if self.student.passed() else "FAIL"
-        messagebox.showinfo("Subjects Summary", f"Average: {avg:.2f}\nOverall: {overall}\nStatus: {status}")
+        messagebox.showinfo("Subjects Summary", f"Average: {avg:.2f}\nOverall Grade: {overall}\nStatus: {status}")
 
     def _refresh_subjects(self):
         self.subj_list.delete(0, tk.END)

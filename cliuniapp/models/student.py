@@ -63,12 +63,10 @@ class Student:
 
     def overall_grade(self) -> str:
         avg = self.average_mark()
-        if avg >= 85:
-            return "HD"
         if avg >= 75:
             return "D"
-        if avg >= 65:
+        elif avg >= 65:
             return "C"
-        if avg >= 50:
+        elif avg >= 50:
             return "P"
-        return "F"
+        return "Z"
